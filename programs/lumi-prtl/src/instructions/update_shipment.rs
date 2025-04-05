@@ -8,11 +8,12 @@ use crate::state::Shipment;
 
 // logistics account will update the shipment account which was initialized by the seller
 pub struct UpdateShipment<'info> {
+    pub seller: SystemAccount<'info>,
     #[account(mut)]
     pub logistics: Signer<'info>,
     #[account(
         mut,
-        seeds = [title.as_bytes(), logistics.key().as_ref()],
+        seeds = [title.as_bytes(), seller.key().as_ref()], // this 
         bump,
         realloc = 8 + Shipment::INIT_SPACE,
         realloc::payer = logistics,
@@ -31,8 +32,32 @@ impl <'info> UpdateShipment<'info> {
         self.shipment.destination_coordinates = destination_coordinates;
         self.shipment.current_location_coordinates = current_location_coordinates;
         self.shipment.status = status;
+        self.shipment.logistics = self.logistics.key();
+
 
         Ok(())
-    }
+    }    
     
+}
+
+#[derive(Accounts)]
+#[instruction(title: String)]
+pub struct DeleteShipment <'info> {
+  #[account(mut)]
+  pub seller: SystemAccount<'info>,
+  pub logistics: Signer<'info>,
+  #[account(
+    mut,
+    seeds = [title.as_bytes(), seller.key().as_ref()],
+    bump,
+    close = logistics,
+  )]
+  pub shipment: Account<'info, Shipment>,
+  pub system_program: Program<'info, System>,
+}
+
+impl <'info> DeleteShipment<'info> {
+  pub fn delete_shipment_state(&mut self) -> Result<()> {
+    Ok(())
+  }
 }

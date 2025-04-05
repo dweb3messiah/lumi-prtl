@@ -13,11 +13,11 @@ pub struct Buy <'info> {
     #[account(mut)]
     pub buyer: Signer<'info>,
 
-    pub mint_a: InterfaceAccount<'info, Mint>,
+    pub mint_usd: InterfaceAccount<'info, Mint>,
 
     #[account(
         mut,
-        associated_token::mint = mint_a,
+        associated_token::mint = mint_usd,
         associated_token::authority = buyer,
     )]
     pub buyer_ata_a: InterfaceAccount<'info, TokenAccount>,
@@ -32,7 +32,7 @@ pub struct Buy <'info> {
     #[account(
         init,
         payer = buyer,
-        associated_token::mint = mint_a,
+        associated_token::mint = mint_usd,
         associated_token::authority = escrow,
     )]
     pub vault: InterfaceAccount<'info, TokenAccount>,
@@ -47,11 +47,13 @@ impl<'info> Buy<'info>{
         seed,
         buyer: self.buyer.key(), // this is the buyer's pubkey
         seller: self.escrow.seller.key(), // this is the seller's pubkey
+        mint_usd: self.mint_usd.key(), // this is the mint of the token to be transferred in exchange for the goods
         bump: bumps.escrow, // this is the bump for the escrow account 
         amount: todo!(), // this is the amount of the token to be transferred in exchange for the goods
         is_completed: todo!(), // this is the status of the escrow account
         is_cancelled: todo!(), 
-        is_disputed: todo!(), 
+        is_disputed: todo!(),
+        dispute_reason: todo!(), 
         is_refunded: todo!(),
         is_dispute_resolved: todo!(),
       });
@@ -66,12 +68,12 @@ impl<'info> Buy<'info>{
         from: self.buyer_ata_a.to_account_info(), 
         to: self.vault.to_account_info(), 
         authority: self.buyer.to_account_info(),
-        mint: self.mint_a.to_account_info(),
+        mint: self.mint_usd.to_account_info(),
       };
   
       let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
   
-      transfer_checked(cpi_ctx, amount, self.mint_a.decimals)?;
+      transfer_checked(cpi_ctx, amount, self.mint_usd.decimals)?;
   
       Ok(()) 
     } 

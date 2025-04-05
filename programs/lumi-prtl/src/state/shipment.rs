@@ -16,4 +16,6 @@ pub struct Shipment {
     pub current_location_coordinates: f64,
     #[max_len(32)]
     pub status: String,
+    pub logistics: Pubkey,
+    pub bump: u8,
 }
