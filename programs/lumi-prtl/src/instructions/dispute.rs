@@ -14,7 +14,7 @@ pub struct Dispute<'info> {
 
     #[account(
         mut,
-        seeds = [title.as_bytes(), escrow.seller.to_bytes().as_ref()],
+        seeds = [title.as_bytes(), escrow.buyer.to_bytes().as_ref()],
         bump
     )]
     pub shipment: Account<'info, Shipment>,

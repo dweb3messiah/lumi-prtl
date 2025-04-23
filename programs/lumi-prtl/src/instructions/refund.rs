@@ -3,6 +3,8 @@ use anchor_spl::{
     associated_token::AssociatedToken,
     token_interface::{transfer_checked, Mint, TokenInterface, TransferChecked, TokenAccount, CloseAccount, close_account},
 };
+use anchor_lang::solana_program::account_info::AccountInfo;
+
 
 use crate::state::Escrow;
 

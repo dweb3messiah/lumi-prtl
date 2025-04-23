@@ -6,7 +6,6 @@ use anchor_lang::prelude::*;
 pub struct Escrow {
     pub seed: u64,
     pub buyer: Pubkey,
-    pub seller: Pubkey,
     pub mint_usd: Pubkey,
     pub amount: u64, // this is the amount of the token to be transferred in exchange for the goods into the vault 
     pub bump: u8,

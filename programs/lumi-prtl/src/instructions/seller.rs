@@ -6,6 +6,8 @@ use anchor_spl::{
         TransferChecked,
     },
 };
+use anchor_lang::solana_program::account_info::AccountInfo;
+
 
 
 use crate::state::Shipment;
@@ -19,6 +21,16 @@ pub struct Ship<'info> {
     #[account(mut)]
     pub seller: Signer<'info>,
     #[account(
+        mint::token_program = token_program,
+    )]
+    pub mint_usd: InterfaceAccount<'info, Mint>,
+    #[account(
+        mut,
+        associated_token::mint = mint_usd,
+        associated_token::authority = seller
+    )]
+    pub seller_ata: InterfaceAccount<'info, TokenAccount>, // Seller's SPL associated token account
+    #[account(
         init,
         payer = seller,
         space = 8 + Shipment::INIT_SPACE,
@@ -27,6 +39,8 @@ pub struct Ship<'info> {
     )]
     pub shipment: Account<'info, Shipment>,
     pub system_program: Program<'info, System>,
+    pub associated_token_program: Program<'info, AssociatedToken>,
+    pub token_program: Interface<'info, TokenInterface>,
 }
 
 impl <'info> Ship<'info> {
@@ -50,6 +64,27 @@ pub struct PaymentForTransportAndTracking<'info> {
     #[account(mut)]
     pub logistics: SystemAccount<'info>, // logistics account
     pub mint_usd: InterfaceAccount<'info, Mint>, // mint of the token to be transferred by the seller
+
+    pub buyer: SystemAccount<'info>, // buyer's account
+
+    #[account(
+        mut,
+        close = buyer,
+        has_one = mint_usd,
+        has_one = buyer,
+        seeds = [b"escrow", escrow.buyer.key().as_ref(), escrow.seed.to_le_bytes().as_ref()],
+        bump = escrow.bump,
+    )]
+    pub escrow: Box<Account<'info, Escrow>>,
+
+
+    #[account(
+        mut,
+        associated_token::mint = mint_usd,
+        associated_token::authority = escrow,
+    )]
+    pub vault: Box<InterfaceAccount<'info, TokenAccount>>,
+
     #[account(
         mut,
         associated_token::mint = mint_usd,
