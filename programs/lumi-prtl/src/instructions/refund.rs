@@ -17,7 +17,7 @@ pub struct Refund<'info> {
     pub mint_usd: InterfaceAccount<'info, Mint>,
     #[account(
       mut, 
-      associated_token::mint = mint_usd, 
+      associated_token::mint = mint_usd,
       associated_token::authority = buyer
     )]
     pub buyer_ata: InterfaceAccount<'info, TokenAccount>,

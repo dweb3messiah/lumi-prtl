@@ -27,8 +27,26 @@ pub mod lumi_prtl {
     }
 
     // 2️⃣ Step 2: Logistics creates shipment
-    pub fn init_shipment(ctx: Context<Ship>, title: String) -> Result<()> {
-        ctx.accounts.init_shipment(title)?;
+    pub fn init_shipment(
+        ctx: Context<Ship>, 
+        title: String,
+        //description: String,
+        //destination_location: String,
+        //current_location: String,
+        //destination_coordinates: f64,
+        //current_location_coordinates: f64,
+        //status: String,
+    ) 
+    -> Result<()> {
+        ctx.accounts.init_shipment(
+            title, 
+            //description, 
+            //destination_location, 
+            //current_location,
+            //destination_coordinates,
+            //current_location_coordinates,
+            //status,
+        )?;
         Ok(())
     }
 

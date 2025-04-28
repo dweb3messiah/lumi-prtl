@@ -44,7 +44,19 @@ pub struct Ship<'info> {
 }
 
 impl <'info> Ship<'info> {
-    pub fn init_shipment(&mut self, title: String) -> Result<()> {
+    pub fn init_shipment
+    (
+        &mut self, title: String, 
+        //description: String,
+        //destination_location: String,
+        //current_location: String,
+        //destination_coordinates: f64,
+        //current_location_coordinates: f64,
+        //status: String,
+    ) 
+    -> 
+    Result<()> 
+    {
         self.shipment.title = title;
         self.shipment.description = "".to_string();
         self.shipment.destination_location = "".to_string();
@@ -64,26 +76,6 @@ pub struct PaymentForTransportAndTracking<'info> {
     #[account(mut)]
     pub logistics: SystemAccount<'info>, // logistics account
     pub mint_usd: InterfaceAccount<'info, Mint>, // mint of the token to be transferred by the seller
-
-    pub buyer: SystemAccount<'info>, // buyer's account
-
-    #[account(
-        mut,
-        close = buyer,
-        has_one = mint_usd,
-        has_one = buyer,
-        seeds = [b"escrow", escrow.buyer.key().as_ref(), escrow.seed.to_le_bytes().as_ref()],
-        bump = escrow.bump,
-    )]
-    pub escrow: Box<Account<'info, Escrow>>,
-
-
-    #[account(
-        mut,
-        associated_token::mint = mint_usd,
-        associated_token::authority = escrow,
-    )]
-    pub vault: Box<InterfaceAccount<'info, TokenAccount>>,
 
     #[account(
         mut,

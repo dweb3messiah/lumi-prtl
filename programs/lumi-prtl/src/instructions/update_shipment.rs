@@ -43,7 +43,19 @@ pub struct UpdateShipment<'info> {
 }
 
 impl <'info> UpdateShipment<'info> {
-    pub fn update_shipment(&mut self, title: String, description: String, destination_location: String, current_location: String, destination_coordinates: f64, current_location_coordinates: f64, status: String) -> Result<()> {
+    //pub fn update_shipment(&mut self, title: String, description: String, destination_location: String, current_location: String, destination_coordinates: f64, current_location_coordinates: f64, status: String) -> Result<()> {
+    pub fn update_shipment(
+      &mut self, 
+      title: String,
+      description: String,
+      destination_location: String,
+      current_location: String,
+      destination_coordinates: f64,
+      current_location_coordinates: f64,
+      status: String,
+    ) 
+    -> Result<()> 
+    {
         self.shipment.title = title;
         self.shipment.description = description;
         self.shipment.destination_location = destination_location;
