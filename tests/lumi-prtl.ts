@@ -35,14 +35,14 @@ describe("lumi-prtl", async () => {
   const seller = Keypair.generate();
   const logistics = Keypair.generate();
 
-  const title = "shipment-001";
-  const destination_location = "New York, NY"; // Example destination location
-  const description = "Electronics shipment"; // Example description
-  const current_location = "Los Angeles, CA"; // Example current location
-  const destination_coordinates = { lat: 40.7128, lng: -74.0060 }; // Example coordinates
-  const current_location_coordinates = 5.7;
+  let title = "shipment-001";
+  let destination_location = "New York, NY"; // Example destination location
+  let description = "Electronics shipment"; // Example description
+  let current_location = "Los Angeles, CA"; // Example current location
+  let destination_coordinates = { lat: 40.7128, lng: -74.0060 }; // Example coordinates
+  let current_location_coordinates = 5.7;
   //{ lat: 34.0522, lng: -118.2437 }; // Example coordinates
-  const status = "In Transit"; // Example status
+  let status = "In Transit"; // Example status
 
   const depositAmountForLogistics = new BN(50_000_000); // 50 USD
 
@@ -73,7 +73,7 @@ describe("lumi-prtl", async () => {
 
 
     // Airdrop SOL logistics
-    await connection.requestAirdrop(logistics.publicKey, 2 * LAMPORTS_PER_SOL);
+    /*await connection.requestAirdrop(logistics.publicKey, 2 * LAMPORTS_PER_SOL);
     const latestBlockhashForLogistics = await connection.getLatestBlockhash();
     await connection.confirmTransaction({
       signature: await connection.requestAirdrop(
@@ -82,7 +82,7 @@ describe("lumi-prtl", async () => {
       ),
       ...latestBlockhashForLogistics,
     });
-    console.log("Airdrop for logistics completed", latestBlockhashForLogistics);
+    console.log("Airdrop for logistics completed", latestBlockhashForLogistics);*/
 
     // Create USD Mint
     mintUsd = await spl.createMint(connection, buyer, buyer.publicKey, null, 6);
@@ -220,14 +220,25 @@ describe("lumi-prtl", async () => {
         title, 
         description, 
         destination_location,
+        current_location,
         destination_coordinates.lat,
         destination_coordinates.lng,
-        current_location,
-        current_location_coordinates,
-        current_location_coordinates,
         status
       )
-      .accountsPartial({})
+      .accountsPartial({
+        seller: seller.publicKey,
+        logistics: logistics.publicKey,
+        shipment: shipmentPda,
+        mintUsd,
+        logisticsAta,
+        associatedTokenProgram: spl.ASSOCIATED_TOKEN_PROGRAM_ID,
+        tokenProgram: spl.TOKEN_PROGRAM_ID,
+        systemProgram: SystemProgram.programId,
+      })
+      .signers([logistics])
+      .rpc();
+    console.log("✅ Transaction successful:", logisticsTx);
+    // Assertions 🧪
   })
   // Log or assert
   //console.log("Derived PDA:", shipmentPda.toBase58());*/
