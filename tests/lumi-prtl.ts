@@ -240,6 +240,17 @@ describe("lumi-prtl", async () => {
     console.log("✅ Transaction successful:", logisticsTx);
     // Assertions 🧪
   })
+
+  it ("Buyer can file a dispute in case of delay or loss of shipment", async () => {
+    const reason = "Delay in shipment"; // Example reason for dispute
+    const disputeTx = program.methods.dispute(title, reason).accountsPartial({
+      escrow,
+      shipment: shipmentPda,
+      buyer: buyer.publicKey,
+      logistics: logistics.publicKey
+    })
+    console.log("Dispute filed successfully:", disputeTx);
+  })
   // Log or assert
   //console.log("Derived PDA:", shipmentPda.toBase58());*/
 });
